@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import com.example.androiddevchallenge.ui.theme.typography
 
@@ -68,12 +69,12 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun MyApp() {
-    Timer(TimerViewModel())
+    Timer()
 }
 
 // Start building your app here!
 @Composable
-fun Timer(timerViewModel: TimerViewModel) {
+fun Timer(timerViewModel: TimerViewModel = viewModel()) {
     Surface(color = MaterialTheme.colors.background, modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier.fillMaxSize(),
