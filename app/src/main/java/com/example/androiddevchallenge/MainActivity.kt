@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -50,8 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.PathNode
-import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -95,7 +92,8 @@ fun Timer(timerViewModel: TimerViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .animateContentSize(), verticalArrangement = Arrangement.Center
+                    .animateContentSize(),
+                verticalArrangement = Arrangement.Center
             ) {
 
                 CountDownTimeText(
@@ -196,7 +194,7 @@ fun CountDownTimeText(
         )
 
         Text(
-            modifier = Modifier.alignByBaseline().padding(start= 4.dp),
+            modifier = Modifier.alignByBaseline().padding(start = 4.dp),
             text = secText,
             style = typography.h2,
             color = color
@@ -210,7 +208,7 @@ fun CountDownTimeText(
         )
         if (milliSecText.isNotEmpty()) {
             Text(
-                modifier = Modifier.alignByBaseline().padding(start= 4.dp),
+                modifier = Modifier.alignByBaseline().padding(start = 4.dp),
                 text = milliSecText,
                 style = typography.h4,
                 color = color

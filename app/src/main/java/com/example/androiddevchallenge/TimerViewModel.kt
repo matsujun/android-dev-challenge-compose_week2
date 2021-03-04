@@ -44,7 +44,6 @@ class TimerViewModel : ViewModel() {
     val isProgressVisible: Boolean
         get() = countDownState != CountDownState.Stop
 
-
     private val timerSec: Long
         get() = if (timerMinSecText.length > 2) {
             timerMinSecText.dropLast(2).toLong() * 60 + timerMinSecText.takeLast(2).toLong()
