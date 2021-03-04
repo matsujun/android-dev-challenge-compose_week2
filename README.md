@@ -1,4 +1,4 @@
-# Put title of your app here
+# Compose Timer
 
 <!--- Replace <OWNER> with your Github Username and <REPOSITORY> with the name of your repository. -->
 <!--- You can find both of these in the url bar when you open your repository in github. -->
@@ -15,6 +15,7 @@ You can resume, and restart the timer.
 <!--- Optionally point readers to interesting parts of your submission. -->
 <!--- What are you especially proud of? -->
 Fully written with JetPack Compose.
+This timer continue count on background too.
 
 ## :camera_flash: Screenshots
 <!-- You can add more screenshots here if you like -->
