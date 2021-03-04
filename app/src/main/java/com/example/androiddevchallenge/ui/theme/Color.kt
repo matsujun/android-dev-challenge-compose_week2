@@ -20,3 +20,5 @@ import androidx.compose.ui.graphics.Color
 val indigo200 = Color(0xFF9FA8DA)
 val indigo500 = Color(0xFF3F51B5)
 val indigo700 = Color(0xFF303F9F)
+val pink500 = Color(0xFFE91E63)
+val pink200 = Color(0xFFF48FB1)

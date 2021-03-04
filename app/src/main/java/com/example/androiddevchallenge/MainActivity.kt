@@ -48,7 +48,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -167,8 +166,8 @@ fun CountDownTimeText(
     isCompleted: Boolean
 ) {
     val completedColor by rememberInfiniteTransition().animateColor(
-        initialValue = Color.Black,
-        targetValue = Color.Magenta,
+        initialValue = MaterialTheme.colors.onBackground,
+        targetValue = MaterialTheme.colors.secondary,
         animationSpec = infiniteRepeatable(
             animation = keyframes {
                 durationMillis = 500
@@ -176,7 +175,7 @@ fun CountDownTimeText(
             repeatMode = RepeatMode.Reverse
         )
     )
-    val color = if (isCompleted) completedColor else Color.Black
+    val color = if (isCompleted) completedColor else MaterialTheme.colors.onBackground
 
     Row(
         modifier = modifier
