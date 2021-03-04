@@ -15,6 +15,10 @@
  */
 package com.example.androiddevchallenge
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,16 +38,14 @@ class TimerViewModel : ViewModel() {
         get() = timerSec > 0
     val isPauseVisible: Boolean
         get() = countDownState == CountDownState.Running
+    val isStopVisible: Boolean
+        get() = countDownState == CountDownState.Running || countDownState == CountDownState.Completed
     val isResetVisible: Boolean
-        get() = countDownState == CountDownState.Pause || countDownState == CountDownState.Completed
+        get() = countDownState == CountDownState.Pause
     val isNumPadVisible: Boolean
         get() = countDownState == CountDownState.Stop
-    val remainTimeColor: Color
-        get() = if (countDownState == CountDownState.Completed) {
-            Color.Magenta
-        } else {
-            Color.Black
-        }
+    val isCompleted: Boolean
+        get() = countDownState == CountDownState.Completed
 
     private val timerSec: Long
         get() = if (timerMinSecText.length > 2) {
@@ -91,7 +93,7 @@ class TimerViewModel : ViewModel() {
                     countDownState = CountDownState.Completed
                     break
                 }
-                delay(100)
+                delay(30)
             }
         }
     }
@@ -100,6 +102,12 @@ class TimerViewModel : ViewModel() {
         job?.cancel()
         capturedRemainTimeMilliSec = remainTimeMilliSec
         countDownState = CountDownState.Pause
+    }
+
+    fun stopCountDown() {
+        job?.cancel()
+        countDownState = CountDownState.Stop
+        capturedRemainTimeMilliSec = 0
     }
 
     fun reset() {

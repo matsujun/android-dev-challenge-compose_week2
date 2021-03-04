@@ -19,9 +19,17 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,9 +41,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -61,14 +71,13 @@ fun MyApp() {
 // Start building your app here!
 @Composable
 fun Timer(timerViewModel: TimerViewModel) {
-    Surface(color = MaterialTheme.colors.background) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+    Surface(color = MaterialTheme.colors.background, modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxWidth().animateContentSize(), verticalArrangement = Arrangement.Center) {
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
+            CountDownTimeText(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = timerViewModel.remainTimeText,
-                style = typography.h2,
-                color = timerViewModel.remainTimeColor
+                isCompleted = timerViewModel.isCompleted
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -85,6 +94,7 @@ fun Timer(timerViewModel: TimerViewModel) {
                         Text("START")
                     }
                 }
+
                 if (timerViewModel.isResetVisible) {
                     Button(
                         modifier = Modifier.padding(8.dp),
@@ -101,6 +111,14 @@ fun Timer(timerViewModel: TimerViewModel) {
                         Text("PAUSE")
                     }
                 }
+                if (timerViewModel.isStopVisible) {
+                    Button(
+                        modifier = Modifier.padding(8.dp),
+                        onClick = { timerViewModel.stopCountDown() }
+                    ) {
+                        Text("STOP")
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(32.dp))
             if (timerViewModel.isNumPadVisible) {
@@ -113,6 +131,34 @@ fun Timer(timerViewModel: TimerViewModel) {
             }
         }
     }
+}
+
+@Composable
+fun CountDownTimeText(
+    modifier: Modifier,
+    text: String,
+    isCompleted: Boolean
+) {
+    val completedColor by rememberInfiniteTransition().animateColor(
+        initialValue = Color.Black,
+        targetValue = Color.Magenta,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 500
+            },
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    Text(
+        modifier = modifier,
+        text = text,
+        style = typography.h2,
+        color = if (isCompleted) {
+            completedColor
+        } else {
+            Color.Black
+        }
+    )
 }
 
 @Composable
