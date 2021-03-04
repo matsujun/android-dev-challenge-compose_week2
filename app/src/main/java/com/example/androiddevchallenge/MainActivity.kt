@@ -71,7 +71,11 @@ fun Timer(timerViewModel: TimerViewModel) {
                 color = timerViewModel.remainTimeColor
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally).height(80.dp)) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .height(80.dp)
+            ) {
                 if (timerViewModel.isStartVisible) {
                     Button(
                         enabled = timerViewModel.isStartEnabled,
@@ -139,7 +143,8 @@ fun NumberInputButtons(
             Button(
                 modifier = Modifier
                     .padding(8.dp)
-                    .size(buttonSize), onClick = onClickClearButton
+                    .size(buttonSize),
+                onClick = onClickClearButton
             ) {
                 Text(text = "C")
             }
