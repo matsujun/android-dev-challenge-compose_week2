@@ -15,14 +15,9 @@
  */
 package com.example.androiddevchallenge
 
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -46,6 +41,9 @@ class TimerViewModel : ViewModel() {
         get() = countDownState == CountDownState.Stop
     val isCompleted: Boolean
         get() = countDownState == CountDownState.Completed
+    val isProgressVisible: Boolean
+        get() = countDownState != CountDownState.Stop
+
 
     private val timerSec: Long
         get() = if (timerMinSecText.length > 2) {
@@ -64,15 +62,28 @@ class TimerViewModel : ViewModel() {
             else -> timerSec * 1000L
         }
 
-    val remainTimeText
+    private val remainTimeTextParts: Triple<String, String, String>
         get() = when (countDownState) {
-            CountDownState.Stop -> "${timerSec / 60} m ${timerSec % 60} s"
-            CountDownState.Completed -> "0 m 0 s 000"
-            else -> "${remainTimeMilliSec / 60_000} m ${(remainTimeMilliSec / 1000) % 60} s ${
-            "%03d".format(
-                remainTimeMilliSec % 1000
+            CountDownState.Stop -> Triple("${timerSec / 60}", "${timerSec % 60}", "")
+            CountDownState.Completed -> Triple("0", "0", "000")
+            else -> Triple(
+                "${remainTimeMilliSec / 60_000}",
+                "${(remainTimeMilliSec / 1000) % 60}",
+                "%03d".format(remainTimeMilliSec % 1000)
             )
-            }"
+        }
+    val remainTimeTextMin
+        get() = remainTimeTextParts.first
+    val remainTimeTextSec
+        get() = remainTimeTextParts.second
+    val remainTimeTextMilliSec
+        get() = remainTimeTextParts.third
+
+    val progress
+        get() = if (countDownState == CountDownState.Completed) {
+            0f
+        } else {
+            (remainTimeMilliSec.toFloat() / (timerSec * 1000))
         }
 
     private var job: Job? = null

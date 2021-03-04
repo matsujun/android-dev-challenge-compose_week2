@@ -26,17 +26,21 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -46,6 +50,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.PathNode
+import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -72,62 +78,82 @@ fun MyApp() {
 @Composable
 fun Timer(timerViewModel: TimerViewModel) {
     Surface(color = MaterialTheme.colors.background, modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxWidth().animateContentSize(), verticalArrangement = Arrangement.Center) {
-            Spacer(modifier = Modifier.height(16.dp))
-            CountDownTimeText(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = timerViewModel.remainTimeText,
-                isCompleted = timerViewModel.isCompleted
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .height(80.dp)
-            ) {
-                if (timerViewModel.isStartVisible) {
-                    Button(
-                        enabled = timerViewModel.isStartEnabled,
-                        modifier = Modifier.padding(8.dp),
-                        onClick = { timerViewModel.startCountDown() }
-                    ) {
-                        Text("START")
-                    }
-                }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
 
-                if (timerViewModel.isResetVisible) {
-                    Button(
-                        modifier = Modifier.padding(8.dp),
-                        onClick = { timerViewModel.reset() }
-                    ) {
-                        Text("RESET")
-                    }
-                }
-                if (timerViewModel.isPauseVisible) {
-                    Button(
-                        modifier = Modifier.padding(8.dp),
-                        onClick = { timerViewModel.pauseCountingDown() }
-                    ) {
-                        Text("PAUSE")
-                    }
-                }
-                if (timerViewModel.isStopVisible) {
-                    Button(
-                        modifier = Modifier.padding(8.dp),
-                        onClick = { timerViewModel.stopCountDown() }
-                    ) {
-                        Text("STOP")
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            if (timerViewModel.isNumPadVisible) {
-                NumberInputButtons(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClickNumberButton = { timerViewModel.appendNumberToStartSec(it) },
-                    onClickClearButton = { timerViewModel.clearStartSec() },
-                    onClickBackspaceButton = { timerViewModel.backspaceStartSec() }
+        ) {
+            if (timerViewModel.isProgressVisible) {
+                CircularProgressIndicator(
+                    progress = timerViewModel.progress,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .padding(16.dp),
                 )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(), verticalArrangement = Arrangement.Center
+            ) {
+
+                CountDownTimeText(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    minText = timerViewModel.remainTimeTextMin,
+                    secText = timerViewModel.remainTimeTextSec,
+                    milliSecText = timerViewModel.remainTimeTextMilliSec,
+                    isCompleted = timerViewModel.isCompleted
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    if (timerViewModel.isStartVisible) {
+                        Button(
+                            enabled = timerViewModel.isStartEnabled,
+                            modifier = Modifier.padding(8.dp),
+                            onClick = { timerViewModel.startCountDown() }
+                        ) {
+                            Text("START")
+                        }
+                    }
+
+                    if (timerViewModel.isResetVisible) {
+                        Button(
+                            modifier = Modifier.padding(8.dp),
+                            onClick = { timerViewModel.reset() }
+                        ) {
+                            Text("RESET")
+                        }
+                    }
+                    if (timerViewModel.isPauseVisible) {
+                        Button(
+                            modifier = Modifier.padding(8.dp),
+                            onClick = { timerViewModel.pauseCountingDown() }
+                        ) {
+                            Text("PAUSE")
+                        }
+                    }
+                    if (timerViewModel.isStopVisible) {
+                        Button(
+                            modifier = Modifier.padding(8.dp),
+                            onClick = { timerViewModel.stopCountDown() }
+                        ) {
+                            Text("STOP")
+                        }
+                    }
+                }
+                if (timerViewModel.isNumPadVisible) {
+                    Spacer(modifier = Modifier.height(32.dp))
+                    NumberInputButtons(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClickNumberButton = { timerViewModel.appendNumberToStartSec(it) },
+                        onClickClearButton = { timerViewModel.clearStartSec() },
+                        onClickBackspaceButton = { timerViewModel.backspaceStartSec() }
+                    )
+                }
             }
         }
     }
@@ -136,7 +162,9 @@ fun Timer(timerViewModel: TimerViewModel) {
 @Composable
 fun CountDownTimeText(
     modifier: Modifier,
-    text: String,
+    minText: String,
+    secText: String,
+    milliSecText: String,
     isCompleted: Boolean
 ) {
     val completedColor by rememberInfiniteTransition().animateColor(
@@ -149,16 +177,46 @@ fun CountDownTimeText(
             repeatMode = RepeatMode.Reverse
         )
     )
-    Text(
-        modifier = modifier,
-        text = text,
-        style = typography.h2,
-        color = if (isCompleted) {
-            completedColor
-        } else {
-            Color.Black
+    val color = if (isCompleted) completedColor else Color.Black
+
+    Row(
+        modifier = modifier
+    ) {
+        Text(
+            modifier = Modifier.alignByBaseline(),
+            text = minText,
+            style = typography.h2,
+            color = color
+        )
+        Text(
+            modifier = Modifier.alignByBaseline(),
+            text = "m",
+            style = typography.h5,
+            color = color
+        )
+
+        Text(
+            modifier = Modifier.alignByBaseline().padding(start= 4.dp),
+            text = secText,
+            style = typography.h2,
+            color = color
+        )
+
+        Text(
+            modifier = Modifier.alignByBaseline(),
+            text = "s",
+            style = typography.h5,
+            color = color
+        )
+        if (milliSecText.isNotEmpty()) {
+            Text(
+                modifier = Modifier.alignByBaseline().padding(start= 4.dp),
+                text = milliSecText,
+                style = typography.h4,
+                color = color
+            )
         }
-    )
+    }
 }
 
 @Composable
